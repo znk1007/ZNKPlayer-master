@@ -18,12 +18,12 @@ typedef void(^ZNKDownloadCallBack)(NSString *urlStr);
 //视频加载失败的回调
 typedef void(^ZNKFailedToCallVideo)();
 
-// playerLayer的填充模式（默认：等比例填充，直到一个维度到达区域边界）
-typedef NS_ENUM(NSInteger, ZNKPlayerLayerGravity) {
-    ZNKPlayerLayerGravityResize,           // 非均匀模式。两个维度完全填充至整个视图区域
-    ZNKPlayerLayerGravityResizeAspect,     // 等比例填充，直到一个维度到达区域边界
-    ZNKPlayerLayerGravityResizeAspectFill  // 等比例填充，直到填充满整个视图区域，其中一个维度的部分区域会被裁剪
-};
+//// playerLayer的填充模式（默认：等比例填充，直到一个维度到达区域边界）
+//typedef NS_ENUM(NSInteger, ZNKPlayerLayerGravity) {
+//    ZNKPlayerLayerGravityResize,           // 非均匀模式。两个维度完全填充至整个视图区域
+//    ZNKPlayerLayerGravityResizeAspect,     // 等比例填充，直到一个维度到达区域边界
+//    ZNKPlayerLayerGravityResizeAspectFill  // 等比例填充，直到填充满整个视图区域，其中一个维度的部分区域会被裁剪
+//};
 
 typedef NS_ENUM(NSInteger, ZNKPlayerScalingMode) {
     ZNKPlayerScalingModeNone,       // No scaling
@@ -96,7 +96,7 @@ typedef NS_ENUM(NSInteger, ZNKPlayerTimeOption) {
 @property (nonatomic, assign)BOOL isGoBackFull;//no全屏的时候直接退出 yes保持不变
 @property (nonatomic, copy  ) ZNKDownloadCallBack   downloadBlock;
 /** 设置playerLayer的填充模式 */
-@property (nonatomic, assign) ZNKPlayerLayerGravity playerLayerGravity;
+@property (nonatomic, assign) ZNKPlayerScalingMode playerLayerGravity;
 /** 是否有下载功能(默认是关闭) */
 @property (nonatomic, assign) BOOL                 hasDownload;
 /** 切换分辨率传的字典(key:分辨率名称，value：分辨率url) */

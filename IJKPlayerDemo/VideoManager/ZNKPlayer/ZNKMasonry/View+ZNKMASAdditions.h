@@ -96,6 +96,6 @@
  *
  *  @return Array of created/updated ZNKMASConstraints
  */
-- (NSArray *)ZNKMAs_reZNKMAkeConstraints:(void(NS_NOESCAPE ^)(ZNKMASConstraintMaker *ZNKMAke))block;
+- (NSArray *)ZNKMAs_remakeConstraints:(void(NS_NOESCAPE ^)(ZNKMASConstraintMaker *ZNKMAke))block;
 
 @end

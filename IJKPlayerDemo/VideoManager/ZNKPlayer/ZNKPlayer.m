@@ -44,7 +44,7 @@ static const CGFloat ZNKPlayerAnimationTimeInterval             = 7.0f;
 static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 @interface ZNKPlayer ()
 /** 播放器 */
-@property(atomic, retain,) id<IJKMediaPlayback> player;
+@property(atomic, retain) id<IJKMediaPlayback> player;
 /** 控制层View */
 @property (nonatomic, strong) ZNKPlayerControlView    *controlView;
 
@@ -176,7 +176,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 
 - (void)dealloc{
     [self teadownPlayer];
-    self.playerItem = nil;
+//    self.playerItem = nil;
     self.tableView = nil;
     // 移除通知
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -278,12 +278,12 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     //    playerView.frame = UIScreen16_9;
     //    playerView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self addSubview:playerView];
-    [playerView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [playerView ZNKMAs_makeConstraints:^(ZNKMASConstraintMaker *make) {
         make.top.leading.bottom.trailing.mas_equalTo(0);
     }];
     
     [self addSubview:self.controlView];
-    [self.controlView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.controlView ZNKMAs_makeConstraints:^(ZNKMASConstraintMaker *make) {
         make.top.leading.bottom.trailing.mas_equalTo(0);
         //        make.top.leading.trailing.bottom.equalTo(self);
     }];
@@ -484,14 +484,14 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }else{
         [self insertSubview:playerView belowSubview:self.controlView];
     }
-    [playerView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [playerView ZNKMAs_makeConstraints:^(ZNKMASConstraintMaker *make) {
         make.top.leading.bottom.trailing.mas_equalTo(0);
     }];
     if (self.isCellFirst == YES) {
         [self addSubview:self.controlView];
     }
     
-    [self.controlView mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self.controlView ZNKMAs_makeConstraints:^(ZNKMASConstraintMaker *make) {
         make.top.leading.bottom.trailing.mas_equalTo(0);
         //        make.top.leading.trailing.bottom.equalTo(self);
     }];
@@ -512,6 +512,87 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
+
+/**
+ *  slider开始滑动事件
+ *
+ *  @param slider UISlider
+ */
+//- (void)progressSliderTouchBegan:(ASValueTrackingSlider *)slider
+//{
+//    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+//}
+
+/**
+ *  slider滑动中事件
+ *
+ *  @param slider UISlider
+ */
+//- (void)progressSliderValueChanged:(ASValueTrackingSlider *)slider
+//{
+//    //拖动改变视频播放进度
+//    if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
+//        NSString *style = @"";
+//        CGFloat value   = slider.value - self.sliderLastValue;
+//        if (value > 0) { style = @">>"; }
+//        if (value < 0) { style = @"<<"; }
+//        if (value == 0) { return; }
+//        
+//        self.sliderLastValue    = slider.value;
+//        // 暂停
+//        [self pause];
+//        
+//        CGFloat total           = (CGFloat)_playerItem.duration.value / _playerItem.duration.timescale;
+//        
+//        //计算出拖动的当前秒数
+//        NSInteger dragedSeconds = floorf(total * slider.value);
+//        
+//        //转换成CMTime才能给player来控制播放进度
+//        
+//        CMTime dragedCMTime     = CMTimeMake(dragedSeconds, 1);
+//        // 拖拽的时长
+//        NSInteger proMin        = (NSInteger)CMTimeGetSeconds(dragedCMTime) / 60;//当前秒
+//        NSInteger proSec        = (NSInteger)CMTimeGetSeconds(dragedCMTime) % 60;//当前分钟
+//        
+//        //duration 总时长
+//        NSInteger durMin        = (NSInteger)total / 60;//总秒
+//        NSInteger durSec        = (NSInteger)total % 60;//总分钟
+//        
+//        NSString *currentTime   = [NSString stringWithFormat:@"%02zd:%02zd", proMin, proSec];
+//        NSString *totalTime     = [NSString stringWithFormat:@"%02zd:%02zd", durMin, durSec];
+//        
+//        if (total > 0) { // 当总时长 > 0时候才能拖动slider
+//            self.controlView.videoSlider.popUpView.hidden = !self.isFullScreen;
+//            self.controlView.currentTimeLabel.text  = currentTime;
+//            if (self.isFullScreen) {
+//                [self.controlView.videoSlider setText:currentTime];
+//                dispatch_queue_t queue = dispatch_queue_create("com.playerPic.queue", DISPATCH_QUEUE_CONCURRENT);
+//                dispatch_async(queue, ^{
+//                    NSError *error;
+//                    CMTime actualTime;
+//                    CGImageRef cgImage = [self.imageGenerator copyCGImageAtTime:dragedCMTime actualTime:&actualTime error:&error];
+//                    CMTimeShow(actualTime);
+//                    UIImage *image = [UIImage imageWithCGImage:cgImage];
+//                    CGImageRelease(cgImage);
+//                    dispatch_async(dispatch_get_main_queue(), ^{
+//                        [self.controlView.videoSlider setImage:image ? : ZNKPlayerImage(@"ZFPlayer_loading_bgView")];
+//                    });
+//                });
+//                
+//            } else {
+//                self.controlView.horizontalLabel.hidden = NO;
+//                self.controlView.horizontalLabel.text   = [NSString stringWithFormat:@"%@ %@ / %@",style, currentTime, totalTime];
+//            }
+//        }else {
+//            // 此时设置slider值为0
+//            slider.value = 0;
+//        }
+//        
+//    }else { // player状态加载失败
+//        // 此时设置slider值为0
+//        slider.value = 0;
+//    }
+//}
 
 /**
  *  slider滑动中事件
@@ -560,7 +641,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
             UIImage *image = [UIImage imageWithCGImage:cgImage];
             CGImageRelease(cgImage);
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self.controlView.videoSlider setImage:image ? : AYPlayerImageFile(@"ZFPlayer_loading_bgView")];
+                [self.controlView.videoSlider setImage:image ? : ZNKPlayerImage(@"ZFPlayer_loading_bgView")];
             });
         });
     }else{
@@ -616,7 +697,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     //                    UIImage *image = [UIImage imageWithCGImage:cgImage];
     //                    CGImageRelease(cgImage);
     //                    dispatch_async(dispatch_get_main_queue(), ^{
-    //                        //                        [self.controlView.videoSlider setImage:image ? : ZFPlayerImage(@"ZFPlayer_loading_bgView")];
+    //                        //                        [self.controlView.videoSlider setImage:image ? : ZNKPlayerImage(@"ZFPlayer_loading_bgView")];
     //                        [self.controlView.videoSlider setImage:image ? : AYPlayerImageFile(@"defaultmovie_")];
     //                    });
     //                });
@@ -672,6 +753,34 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     //    }
 }
 
+/**
+ *  slider结束滑动事件
+ *
+ *  @param slider UISlider
+ */
+//- (void)progressSliderTouchEnded:(ASValueTrackingSlider *)slider
+//{
+//    if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
+//        
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            self.controlView.horizontalLabel.hidden = YES;
+//        });
+//        // 结束滑动时候把开始播放按钮改为播放状态
+//        self.controlView.startBtn.selected = YES;
+//        self.isPauseByUser                 = NO;
+//        
+//        // 滑动结束延时隐藏controlView
+//        [self autoFadeOutControlBar];
+//        // 视频总时间长度
+//        CGFloat total           = (CGFloat)_playerItem.duration.value / _playerItem.duration.timescale;
+//        
+//        //计算出拖动的当前秒数
+//        NSInteger dragedSeconds = floorf(total * slider.value);
+//        
+//        [self seekToTime:dragedSeconds completionHandler:nil];
+//    }
+//}
+
 - (void)startAction:(UIButton *)button
 {
     button.selected    = !button.selected;
@@ -682,6 +791,24 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         [self pause];
     }
 }
+
+/**
+ *  播放、暂停按钮事件
+ *
+ *  @param button UIButton
+ */
+//- (void)startAction:(UIButton *)button
+//{
+//    button.selected    = !button.selected;
+//    self.isPauseByUser = !self.isPauseByUser;
+//    if (button.selected) {
+//        [self play];
+//        if (self.state == ZFPlayerStatePause) { self.state = ZFPlayerStatePlaying; }
+//    } else {
+//        [self pause];
+//        if (self.state == ZFPlayerStatePlaying) { self.state = ZFPlayerStatePause;}
+//    }
+//}
 
 - (void)prepareToPlay {
     if (self.player) {
@@ -706,6 +833,16 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }
 }
 
+/**
+ *  播放
+ */
+//- (void)play
+//{
+//    self.controlView.startBtn.selected = YES;
+//    self.isPauseByUser = NO;
+//    [_player play];
+//}
+
 -(void)pause {
     if ([self.player isPlaying]) {
         
@@ -715,6 +852,16 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         [self.timer setFireDate:[NSDate distantFuture]];//暂停timer
     }
 }
+
+///**
+// * 暂停
+// */
+//- (void)pause
+//{
+//    self.controlView.startBtn.selected = NO;
+//    self.isPauseByUser = YES;
+//    [_player pause];
+//}
 
 -(void)stop {
     
@@ -756,14 +903,31 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 
 #pragma mark - Action
 
+//- (void)tapAction:(UITapGestureRecognizer *)gesture
+//{
+//    if (gesture.state == UIGestureRecognizerStateRecognized) {
+//        //        [self startAction:self.controlView.startBtn];
+//        
+//        self.isMaskShowing ? ([self hideControlView]) : ([self animateShow]);
+//    }
+//}
+
+/**
+ *   轻拍方法
+ *
+ *  @param gesture UITapGestureRecognizer
+ */
 - (void)tapAction:(UITapGestureRecognizer *)gesture
 {
     if (gesture.state == UIGestureRecognizerStateRecognized) {
-        //        [self startAction:self.controlView.startBtn];
-        
+        if (self.isBottomVideo && !self.isFullScreen) {
+            [self fullScreenAction:self.controlView.fullScreenBtn];
+            return;
+        }
         self.isMaskShowing ? ([self hideControlView]) : ([self animateShow]);
     }
 }
+
 /**
  *  双击播放/暂停
  *
@@ -775,6 +939,19 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     [self animateShow];
     [self startAction:self.controlView.startBtn];
 }
+
+/**
+ *  双击播放/暂停
+ *
+ *  @param gesture UITapGestureRecognizer
+ */
+//- (void)doubleTapAction:(UITapGestureRecognizer *)gesture
+//{
+//    // 显示控制层
+//    [self animateShow];
+//    [self startAction:self.controlView.startBtn];
+//}
+
 #pragma mark - UIPanGestureRecognizer手势方法
 
 /**
@@ -894,7 +1071,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     //    CMTime totalTime           = self.player.duration;
     CGFloat totalMovieDuration = self.player.duration;
     // 每次滑动需要叠加时间
-    self.sumTime += 3*value/self.width/totalMovieDuration;
+    self.sumTime += 3 * value / self.frame.size.width / totalMovieDuration;
     if (self.sumTime > totalMovieDuration) { self.sumTime = totalMovieDuration;}
     if (self.sumTime < 0) { self.sumTime = 0; }
     
@@ -925,7 +1102,46 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     NSString *sec = [NSString stringWithFormat:@"%02d",time % 60];
     return [NSString stringWithFormat:@"%@:%@", min, sec];
 }
+
+/**
+ *  根据时长求出字符串
+ *
+ *  @param time 时长
+ *
+ *  @return 时长字符串
+ */
+//- (NSString *)durationStringWithTime:(int)time
+//{
+//    // 获取分钟
+//    NSString *min = [NSString stringWithFormat:@"%02d",time / 60];
+//    // 获取秒数
+//    NSString *sec = [NSString stringWithFormat:@"%02d",time % 60];
+//    return [NSString stringWithFormat:@"%@:%@", min, sec];
+//}
+
 #pragma mark - UIGestureRecognizerDelegate
+
+//- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+//{
+//    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+//        CGPoint point = [touch locationInView:self.controlView];
+//        // （屏幕下方slider区域） || （在cell上播放视频 && 不是全屏状态） || (播放完了) =====>  不响应pan手势
+//        if ((point.y > self.bounds.size.height-40) || (self.isCellVideo && !self.isFullScreen) || self.playDidEnd) { return NO; }
+//        return YES;
+//    }
+//    // 在cell上播放视频 && 不是全屏状态 && 点在控制层上
+//    if (self.isBottomVideo && !self.isFullScreen && touch.view == self.controlView) {
+//        [self fullScreenAction:self.controlView.fullScreenBtn];
+//        return NO;
+//    }
+//    if (self.isBottomVideo && !self.isFullScreen && touch.view == self.controlView.backBtn) {
+//        // 关闭player
+//        [self resetPlayer];
+//        [self removeFromSuperview];
+//        return NO;
+//    }
+//    return YES;
+//}
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
@@ -986,7 +1202,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (void)animateShow
 {
     if (self.isMaskShowing) { return; }
-    [UIView animateWithDuration:ZFPlayerControlBarAutoFadeOutTimeInterval animations:^{
+    [UIView animateWithDuration:ZNKPlayerControlBarAutoFadeOutTimeInterval animations:^{
         self.controlView.backBtn.alpha = 1;
         if (self.isBottomVideo && !self.isFullScreen) { [self.controlView hideControlView]; } // 视频在底部bottom小屏,并且不是全屏状态
         else if (self.playDidEnd) { [self.controlView hideControlView]; } // 播放完了
@@ -1003,15 +1219,97 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  */
 - (void)backButtonAction
 {
-    
+    if (self.isLocked) {
+        [self unLockTheScreen];
+        return;
+    }else {
+        if (!self.isFullScreen) {
+            // 在cell上播放视频
+            if (self.isCellVideo) {
+                // 关闭player
+                [self resetPlayer];
+                [self removeFromSuperview];
+                return;
+            }
+            // player加到控制器上，只有一个player时候
+            [self pause];
+            self.player = nil;
+            //            self.playerLayer = nil;
+            if (self.goBackBlock) {
+                self.goBackBlock();
+            }
+        }else {
+            //if (self.isGoBackFull) {
+            [self interfaceOrientation:UIInterfaceOrientationPortrait];
+            
+            //            }else {
+            //                // player加到控制器上，只有一个player时候
+            //                [self pause];
+            //                self.player = nil;
+            //                self.playerLayer = nil;
+            //                if (self.goBackBlock) {
+            //                    self.goBackBlock();
+            //                }
+            //
+            //
+            //            }
+        }
+    }
     if (self.isFullScreen) {
         [[UIApplication sharedApplication] setStatusBarHidden:NO];
         [self toSmallScreen];
+        if (self.goBackBlock) {
+            self.goBackBlock();
+        }
     }else {
         
     }
     
 }
+
+///**
+// *  返回按钮事件
+// */
+//- (void)backButtonAction
+//{
+//    if (self.isLocked) {
+//        [self unLockTheScreen];
+//        return;
+//    }else {
+//        if (!self.isFullScreen) {
+//            // 在cell上播放视频
+//            if (self.isCellVideo) {
+//                // 关闭player
+//                [self resetPlayer];
+//                [self removeFromSuperview];
+//                return;
+//            }
+//            // player加到控制器上，只有一个player时候
+//            [self pause];
+//            self.player = nil;
+//            //            self.playerLayer = nil;
+//            if (self.goBackBlock) {
+//                self.goBackBlock();
+//            }
+//        }else {
+//            //if (self.isGoBackFull) {
+//            [self interfaceOrientation:UIInterfaceOrientationPortrait];
+//            
+//            //            }else {
+//            //                // player加到控制器上，只有一个player时候
+//            //                [self pause];
+//            //                self.player = nil;
+//            //                self.playerLayer = nil;
+//            //                if (self.goBackBlock) {
+//            //                    self.goBackBlock();
+//            //                }
+//            //
+//            //
+//            //            }
+//        }
+//    }
+//}
+
 #pragma mark - KVO
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -1078,7 +1376,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
             make.width.ZNKMAs_equalTo(width);
             make.trailing.ZNKMAs_equalTo(-10);
             make.bottom.ZNKMAs_equalTo(-self.tableView.contentInset.bottom-10);
-            make.height.equalTo(self.mas_width).multipliedBy(9.0f/16.0f).with.priority(750);
+            make.height.equalTo(self.ZNKMAs_width).multipliedBy(9.0f/16.0f).with.priority(750);
         }];
     }
     // 不显示控制层
@@ -1093,7 +1391,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (void)addPlayerToCellImageView:(UIImageView *)imageView
 {
     [imageView addSubview:self];
-    [self mas_updateConstraints:^(MASConstraintMaker *make) {
+    [self ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
         make.top.leading.trailing.bottom.equalTo(imageView);
     }];
 }
@@ -1234,11 +1532,11 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         }else if(interfaceOrientation==UIInterfaceOrientationLandscapeRight){
             self.transform = CGAffineTransformMakeRotation(-M_PI_2);
         }
-        [self mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.centerX.mas_equalTo(0);
-            make.centerY.mas_equalTo(0);
-            make.height.mas_equalTo(SCREEN_WIDTH);
-            make.width.mas_equalTo(SCREEN_HEIGHT);
+        [self ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
+            make.centerX.ZNKMAs_equalTo(0);
+            make.centerY.ZNKMAs_equalTo(0);
+            make.height.ZNKMAs_equalTo(ScreenWidth);
+            make.width.ZNKMAs_equalTo(ScreenHeight);
         }];
         
     } completion:^(BOOL finished) {
@@ -1255,7 +1553,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         // 竖屏时候table滑动到可视范围
         [self.tableView scrollToRowAtIndexPath:self.indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
         // 重新监听tableview偏移量
-        [self.tableView addObserver:self forKeyPath:kZFPlayerViewContentOffset options:NSKeyValueObservingOptionNew context:nil];
+        [self.tableView addObserver:self forKeyPath:kZNKPlayerViewContentOffset options:NSKeyValueObservingOptionNew context:nil];
         
         [self removeFromSuperview];
         UITableViewCell * cell = [self.tableView cellForRowAtIndexPath:self.indexPath];
@@ -1284,13 +1582,13 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         //    [[UIApplication sharedApplication].keyWindow bringSubviewToFront:self];
         [UIView animateWithDuration:0.25f animations:^{
             self.transform = CGAffineTransformIdentity;
-            [self mas_updateConstraints:^(MASConstraintMaker *make) {
+            [self ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
                 make.top.mas_equalTo(0);
                 make.left.mas_equalTo(0);
                 //        make.centerX.mas_equalTo(0);
                 //        make.centerY.mas_equalTo(0);
-                make.height.mas_equalTo(self.videoView.height);
-                make.width.mas_equalTo(self.videoView.width);
+                make.height.ZNKMAs_equalTo(self.videoView.frame.size.height);
+                make.width.ZNKMAs_equalTo(self.videoView.frame.size.width);
             }];
             
         } completion:^(BOOL finished) {
@@ -1310,29 +1608,29 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 {
     if (_tableView == tableView) { return; }
     
-    if (_tableView) { [_tableView removeObserver:self forKeyPath:kZFPlayerViewContentOffset]; }
+    if (_tableView) { [_tableView removeObserver:self forKeyPath:kZNKPlayerViewContentOffset]; }
     _tableView = tableView;
-    if (tableView) { [tableView addObserver:self forKeyPath:kZFPlayerViewContentOffset options:NSKeyValueObservingOptionNew context:nil]; }
+    if (tableView) { [tableView addObserver:self forKeyPath:kZNKPlayerViewContentOffset options:NSKeyValueObservingOptionNew context:nil]; }
 }
 /**
  *  设置playerLayer的填充模式
  *
  *  @param playerLayerGravity playerLayerGravity
  */
-- (void)setPlayerLayerGravity:(ZNKPlayerLayerGravity)playerLayerGravity
+- (void)setPlayerLayerGravity:(ZNKPlayerScalingMode)playerLayerGravity
 {
     _playerLayerGravity = playerLayerGravity;
     // AVLayerVideoGravityResize,           // 非均匀模式。两个维度完全填充至整个视图区域
     // AVLayerVideoGravityResizeAspect,     // 等比例填充，直到一个维度到达区域边界
     // AVLayerVideoGravityResizeAspectFill  // 等比例填充，直到填充满整个视图区域，其中一个维度的部分区域会被裁剪
     switch (playerLayerGravity) {
-        case AYPlayerLayerGravityFill:
+        case ZNKPlayerScalingModeFill:
             self.player.scalingMode = IJKMPMovieScalingModeFill;
             break;
-        case AYPlayerLayerGravityAspectFit:
+        case ZNKPlayerScalingModeAspectFit:
             self.player.scalingMode = IJKMPMovieScalingModeAspectFit;
             break;
-        case AYPlayerLayerGravityAspectFill:
+        case ZNKPlayerScalingModeAspectFill:
             self.player.scalingMode = IJKMPMovieScalingModeAspectFill;
             break;
         default:
@@ -1360,7 +1658,11 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (ZNKPlayerControlView *)controlView {
     
     if (!_controlView) {
-        _controlView = [[AYPlayerControlView alloc]init];
+        _controlView = [[ZNKPlayerControlView alloc]init];
+        SKWeakSelf(self);
+        [_controlView ZNKMAs_makeConstraints:^(ZNKMASConstraintMaker *make) {
+            make.top.leading.trailing.bottom.equalTo(weakself);
+        }];
     }
     return _controlView;
 }
@@ -1565,13 +1867,13 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
 - (void)gotoShowInView:(UIView *)view withFrame:(CGRect)rect
 {
     [view addSubview:self];
-    [self mas_updateConstraints:^(ZNKMASConstraintMaker *make) {
+    [self ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
         make.top.ZNKMAs_equalTo(0);
         make.left.ZNKMAs_equalTo(0);
 //        make.centerX.mas_equalTo(0);
 //        make.centerY.mas_equalTo(0);
-        make.height.ZNKMAs_equalTo(view.height);
-        make.width.ZNKMAs_equalTo(view.width);
+        make.height.ZNKMAs_equalTo(view.frame.size.height);
+        make.width.ZNKMAs_equalTo(view.frame.size.width);
     }];
 }
 
@@ -1628,9 +1930,9 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     [self.controlView.startBtn addTarget:self action:@selector(startAction:) forControlEvents:UIControlEventTouchUpInside];
     // cell上播放视频的话，该返回按钮为×
     if (self.isCellVideo) {
-        [self.controlView.backBtn setImage:ZFPlayerImage(@"ZFPlayer_close") forState:UIControlStateNormal];
+        [self.controlView.backBtn setImage:ZNKPlayerImage(@"ZFPlayer_close") forState:UIControlStateNormal];
     }else {
-        [self.controlView.backBtn setImage:ZFPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
+        [self.controlView.backBtn setImage:ZNKPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
     }
     // 返回按钮点击事件
     [self.controlView.backBtn addTarget:self action:@selector(backButtonAction) forControlEvents:UIControlEventTouchUpInside];
@@ -1649,7 +1951,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     // 切换分辨率
     self.controlView.resolutionBlock = ^(UIButton *button) {
         // 记录切换分辨率的时刻
-        NSInteger currentTime = (NSInteger)CMTimeGetSeconds([weakSelf.player currentTime]);
+        NSTimeInterval currentTime = weakSelf.player.currentPlaybackTime;
         
         NSString *videoStr = weakSelf.videoURLArray[button.tag-200];
         NSURL *videoURL = [NSURL URLWithString:videoStr];
@@ -1668,11 +1970,11 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     self.controlView.tapBlock = ^(CGFloat value) {
         [weakSelf pause];
         // 视频总时间长度
-        CGFloat total           = (CGFloat)weakSelf.playerItem.duration.value / weakSelf.playerItem.duration.timescale;
+        NSTimeInterval total           = weakSelf.player.duration;
         //计算出拖动的当前秒数
         NSInteger dragedSeconds = floorf(total * value);
         weakSelf.controlView.startBtn.selected = YES;
-        [weakSelf seekToTime:dragedSeconds completionHandler:^(BOOL finished) {}];
+//        [weakSelf seekToTime:dragedSeconds completionHandler:^(BOOL finished) {}];
         
     };
     // 监测设备方向
@@ -1728,7 +2030,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     _videoURL = videoURL;
     
     if (!self.placeholderImageName) {
-        UIImage *image = ZFPlayerImage(@"ZFPlayer_loading_bgView");
+        UIImage *image = ZNKPlayerImage(@"ZFPlayer_loading_bgView");
         self.layer.contents = (id) image.CGImage;
     }
     
@@ -1752,20 +2054,20 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  */
 - (void)configZFPlayer
 {
-    self.urlAsset = [AVURLAsset assetWithURL:self.videoURL];
-    // 初始化playerItem
-    self.playerItem = [AVPlayerItem playerItemWithAsset:self.urlAsset];
-    // 每次都重新创建Player，替换replaceCurrentItemWithPlayerItem:，该方法阻塞线程
-    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
-    
-    // 初始化playerLayer
-    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-    
-    // 此处为默认视频填充模式
-    self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-    // 添加playerLayer到self.layer
-    [self.layer insertSublayer:self.playerLayer atIndex:0];
-    
+//    self.urlAsset = [AVURLAsset assetWithURL:self.videoURL];
+//    // 初始化playerItem
+//    self.playerItem = [AVPlayerItem playerItemWithAsset:self.urlAsset];
+//    // 每次都重新创建Player，替换replaceCurrentItemWithPlayerItem:，该方法阻塞线程
+//    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
+//    
+//    // 初始化playerLayer
+//    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+//    
+//    // 此处为默认视频填充模式
+//    self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+//    // 添加playerLayer到self.layer
+//    [self.layer insertSublayer:self.playerLayer atIndex:0];
+//    self.player
     // 初始化显示controlView为YES
     self.isMaskShowing = YES;
     // 延迟隐藏controlView
@@ -1782,11 +2084,11 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     
     // 本地文件不设置ZFPlayerStateBuffering状态
     if ([self.videoURL.scheme isEqualToString:@"file"]) {
-        self.state = ZFPlayerStatePlaying;
+//        self.state = ZFPlayerStatePlaying;
         self.isLocalVideo = YES;
         self.controlView.downLoadBtn.enabled = NO;
     } else {
-        self.state = ZFPlayerStateBuffering;
+//        self.state = ZFPlayerStateBuffering;
         self.isLocalVideo = NO;
     }
     // 开始播放
@@ -1938,13 +2240,13 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         case UIInterfaceOrientationPortraitUpsideDown:{
             self.controlView.fullScreenBtn.selected = YES;
             if (self.isCellVideo) {
-                [self.controlView.backBtn setImage:ZFPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
+                [self.controlView.backBtn setImage:ZNKPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
             }
             // 设置返回按钮的约束
-            [self.controlView.backBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(20);
-                make.leading.mas_equalTo(7);
-                make.width.height.mas_equalTo(40);
+            [self.controlView.backBtn ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
+                make.top.ZNKMAs_equalTo(20);
+                make.leading.ZNKMAs_equalTo(7);
+                make.width.height.ZNKMAs_equalTo(40);
             }];
             self.isFullScreen = YES;
             
@@ -1956,11 +2258,11 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
             if (self.isCellVideo) {
                 // 改为只允许竖屏播放
                 ZNKPlayerShared.isAllowLandscape = NO;
-                [self.controlView.backBtn setImage:ZFPlayerImage(@"ZFPlayer_close") forState:UIControlStateNormal];
-                [self.controlView.backBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                    make.top.mas_equalTo(10);
-                    make.leading.mas_equalTo(7);
-                    make.width.height.mas_equalTo(20);
+                [self.controlView.backBtn setImage:ZNKPlayerImage(@"ZFPlayer_close") forState:UIControlStateNormal];
+                [self.controlView.backBtn ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
+                    make.top.ZNKMAs_equalTo(10);
+                    make.leading.ZNKMAs_equalTo(7);
+                    make.width.height.ZNKMAs_equalTo(20);
                 }];
                 
                 // 点击播放URL时候不会调用次方法
@@ -1968,16 +2270,16 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
                     // 竖屏时候table滑动到可视范围
                     [self.tableView scrollToRowAtIndexPath:self.indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
                     // 重新监听tableview偏移量
-                    [self.tableView addObserver:self forKeyPath:kZFPlayerViewContentOffset options:NSKeyValueObservingOptionNew context:nil];
+                    [self.tableView addObserver:self forKeyPath:kZNKPlayerViewContentOffset options:NSKeyValueObservingOptionNew context:nil];
                 }
                 // 当设备转到竖屏时候，设置为竖屏约束
                 [self setOrientationPortrait];
                 
             }else {
-                [self.controlView.backBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                    make.top.mas_equalTo(5);
-                    make.leading.mas_equalTo(7);
-                    make.width.height.mas_equalTo(40);
+                [self.controlView.backBtn ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
+                    make.top.ZNKMAs_equalTo(5);
+                    make.leading.ZNKMAs_equalTo(7);
+                    make.width.height.ZNKMAs_equalTo(40);
                 }];
             }
             self.isFullScreen = NO;
@@ -1987,12 +2289,12 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         case UIInterfaceOrientationLandscapeLeft:{
             self.controlView.fullScreenBtn.selected = YES;
             if (self.isCellVideo) {
-                [self.controlView.backBtn setImage:ZFPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
+                [self.controlView.backBtn setImage:ZNKPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
             }
-            [self.controlView.backBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(20);
-                make.leading.mas_equalTo(7);
-                make.width.height.mas_equalTo(40);
+            [self.controlView.backBtn ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
+                make.top.ZNKMAs_equalTo(20);
+                make.leading.ZNKMAs_equalTo(7);
+                make.width.height.ZNKMAs_equalTo(40);
             }];
             self.isFullScreen = YES;
         }
@@ -2000,12 +2302,12 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         case UIInterfaceOrientationLandscapeRight:{
             self.controlView.fullScreenBtn.selected = YES;
             if (self.isCellVideo) {
-                [self.controlView.backBtn setImage:ZFPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
+                [self.controlView.backBtn setImage:ZNKPlayerImage(@"ZFPlayer_back_full") forState:UIControlStateNormal];
             }
-            [self.controlView.backBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-                make.top.mas_equalTo(20);
-                make.leading.mas_equalTo(7);
-                make.width.height.mas_equalTo(40);
+            [self.controlView.backBtn ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
+                make.top.ZNKMAs_equalTo(20);
+                make.leading.ZNKMAs_equalTo(7);
+                make.width.height.ZNKMAs_equalTo(40);
             }];
             self.isFullScreen = YES;
         }
@@ -2019,11 +2321,11 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     
     // 在cell上播放视频 && 不允许横屏（此时为竖屏状态,解决自动转屏到横屏，状态栏消失bug）
     if (self.isCellVideo && !ZNKPlayerShared.isAllowLandscape) {
-        [self.controlView.backBtn setImage:ZFPlayerImage(@"ZFPlayer_close") forState:UIControlStateNormal];
-        [self.controlView.backBtn mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.top.mas_equalTo(10);
-            make.leading.mas_equalTo(7);
-            make.width.height.mas_equalTo(20);
+        [self.controlView.backBtn setImage:ZNKPlayerImage(@"ZFPlayer_close") forState:UIControlStateNormal];
+        [self.controlView.backBtn ZNKMAs_updateConstraints:^(ZNKMASConstraintMaker *make) {
+            make.top.ZNKMAs_equalTo(10);
+            make.leading.ZNKMAs_equalTo(7);
+            make.width.height.ZNKMAs_equalTo(20);
         }];
         self.controlView.fullScreenBtn.selected = NO;
         self.controlView.lockBtn.hidden = YES;
@@ -2067,7 +2369,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  */
 - (void)bufferingSomeSecond
 {
-    self.state = ZFPlayerStateBuffering;
+//    self.state = ZFPlayerStateBuffering;
     // playbackBufferEmpty会反复进入，因此在bufferingOneSecond延时播放执行完之前再调用bufferingSomeSecond都忽略
     __block BOOL isBuffering = NO;
     if (isBuffering) return;
@@ -2086,7 +2388,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         [self play];
         // 如果执行了play还是没有播放则说明还没有缓存好，则再次缓存一段时间
         isBuffering = NO;
-        if (!self.playerItem.isPlaybackLikelyToKeepUp) { [self bufferingSomeSecond]; }
+//        if (!self.playerItem.isPlaybackLikelyToKeepUp) { [self bufferingSomeSecond]; }
         
     });
 }
@@ -2098,126 +2400,24 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  *
  *  @return 缓冲进度
  */
-- (NSTimeInterval)availableDuration {
-    NSArray *loadedTimeRanges = [[_player currentItem] loadedTimeRanges];
-    CMTimeRange timeRange     = [loadedTimeRanges.firstObject CMTimeRangeValue];// 获取缓冲区域
-    float startSeconds        = CMTimeGetSeconds(timeRange.start);
-    float durationSeconds     = CMTimeGetSeconds(timeRange.duration);
-    NSTimeInterval result     = startSeconds + durationSeconds;// 计算缓冲总进度
-    return result;
-}
+//- (NSTimeInterval)availableDuration {
+////    NSArray *loadedTimeRanges = [[_player currentItem] loadedTimeRanges];
+////    CMTimeRange timeRange     = [loadedTimeRanges.firstObject CMTimeRangeValue];// 获取缓冲区域
+//    float startSeconds        = CMTimeGetSeconds(timeRange.start);
+//    float durationSeconds     = CMTimeGetSeconds(timeRange.duration);
+//    NSTimeInterval result     = startSeconds + durationSeconds;// 计算缓冲总进度
+//    return result;
+//}
 
 #pragma mark - Action
 
-/**
- *   轻拍方法
- *
- *  @param gesture UITapGestureRecognizer
- */
-- (void)tapAction:(UITapGestureRecognizer *)gesture
-{
-    if (gesture.state == UIGestureRecognizerStateRecognized) {
-        if (self.isBottomVideo && !self.isFullScreen) {
-            [self fullScreenAction:self.controlView.fullScreenBtn];
-            return;
-        }
-        self.isMaskShowing ? ([self hideControlView]) : ([self animateShow]);
-    }
-}
-
-/**
- *  双击播放/暂停
- *
- *  @param gesture UITapGestureRecognizer
- */
-- (void)doubleTapAction:(UITapGestureRecognizer *)gesture
-{
-    // 显示控制层
-    [self animateShow];
-    [self startAction:self.controlView.startBtn];
-}
 
 
-/**
- *  播放、暂停按钮事件
- *
- *  @param button UIButton
- */
-- (void)startAction:(UIButton *)button
-{
-    button.selected    = !button.selected;
-    self.isPauseByUser = !self.isPauseByUser;
-    if (button.selected) {
-        [self play];
-        if (self.state == ZFPlayerStatePause) { self.state = ZFPlayerStatePlaying; }
-    } else {
-        [self pause];
-        if (self.state == ZFPlayerStatePlaying) { self.state = ZFPlayerStatePause;}
-    }
-}
 
-/**
- *  播放
- */
-- (void)play
-{
-    self.controlView.startBtn.selected = YES;
-    self.isPauseByUser = NO;
-    [_player play];
-}
 
-/**
- * 暂停
- */
-- (void)pause
-{
-    self.controlView.startBtn.selected = NO;
-    self.isPauseByUser = YES;
-    [_player pause];
-}
 
-/**
- *  返回按钮事件
- */
-- (void)backButtonAction
-{
-    if (self.isLocked) {
-        [self unLockTheScreen];
-        return;
-    }else {
-        if (!self.isFullScreen) {
-            // 在cell上播放视频
-            if (self.isCellVideo) {
-                // 关闭player
-                [self resetPlayer];
-                [self removeFromSuperview];
-                return;
-            }
-            // player加到控制器上，只有一个player时候
-            [self pause];
-            self.player = nil;
-            self.playerLayer = nil;
-            if (self.goBackBlock) {
-                self.goBackBlock();
-            }
-        }else {
-            //if (self.isGoBackFull) {
-            [self interfaceOrientation:UIInterfaceOrientationPortrait];
-            
-            //            }else {
-            //                // player加到控制器上，只有一个player时候
-            //                [self pause];
-            //                self.player = nil;
-            //                self.playerLayer = nil;
-            //                if (self.goBackBlock) {
-            //                    self.goBackBlock();
-            //                }
-            //
-            //
-            //            }
-        }
-    }
-}
+
+
 
 /**
  *  重播点击事件
@@ -2235,7 +2435,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     [self animateShow];
     // 重置控制层View
     [self.controlView resetControlView];
-    [self seekToTime:0 completionHandler:nil];
+//    [self seekToTime:0 completionHandler:nil];
 }
 
 - (void)downloadVideo:(UIButton *)sender
@@ -2255,7 +2455,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  */
 - (void)moviePlayDidEnd:(NSNotification *)notification
 {
-    self.state            = ZFPlayerStateStopped;
+//    self.state            = ZFPlayerStateStopped;
     if (self.isBottomVideo && !self.isFullScreen) { // 播放完了，如果是在小屏模式 && 在bottom位置，直接关闭播放器
         self.repeatToPlay = NO;
         self.playDidEnd   = NO;
@@ -2271,169 +2471,61 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
     }
 }
 
-/**
- *  应用退到后台
- */
-- (void)appDidEnterBackground
-{
-    self.didEnterBackground = YES;
-    [_player pause];
-    self.state = ZFPlayerStatePause;
-    [self cancelAutoFadeOutControlBar];
-    self.controlView.startBtn.selected = NO;
-}
+///**
+// *  应用退到后台
+// */
+//- (void)appDidEnterBackground
+//{
+//    self.didEnterBackground = YES;
+//    [_player pause];
+//    self.state = ZFPlayerStatePause;
+//    [self cancelAutoFadeOutControlBar];
+//    self.controlView.startBtn.selected = NO;
+//}
+//
+///**
+// *  应用进入前台
+// */
+//- (void)appDidEnterPlayGround
+//{
+//    self.didEnterBackground = NO;
+//    self.isMaskShowing = NO;
+//    // 延迟隐藏controlView
+//    [self animateShow];
+//    if (!self.isPauseByUser) {
+//        self.state                         = ZFPlayerStatePlaying;
+//        self.controlView.startBtn.selected = YES;
+//        self.isPauseByUser                 = NO;
+//        [self play];
+//    }
+//}
 
-/**
- *  应用进入前台
- */
-- (void)appDidEnterPlayGround
-{
-    self.didEnterBackground = NO;
-    self.isMaskShowing = NO;
-    // 延迟隐藏controlView
-    [self animateShow];
-    if (!self.isPauseByUser) {
-        self.state                         = ZFPlayerStatePlaying;
-        self.controlView.startBtn.selected = YES;
-        self.isPauseByUser                 = NO;
-        [self play];
-    }
-}
 
-#pragma mark - slider事件
 
-/**
- *  slider开始滑动事件
- *
- *  @param slider UISlider
- */
-- (void)progressSliderTouchBegan:(ASValueTrackingSlider *)slider
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget:self];
-}
 
-/**
- *  slider滑动中事件
- *
- *  @param slider UISlider
- */
-- (void)progressSliderValueChanged:(ASValueTrackingSlider *)slider
-{
-    //拖动改变视频播放进度
-    if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
-        NSString *style = @"";
-        CGFloat value   = slider.value - self.sliderLastValue;
-        if (value > 0) { style = @">>"; }
-        if (value < 0) { style = @"<<"; }
-        if (value == 0) { return; }
-        
-        self.sliderLastValue    = slider.value;
-        // 暂停
-        [self pause];
-        
-        CGFloat total           = (CGFloat)_playerItem.duration.value / _playerItem.duration.timescale;
-        
-        //计算出拖动的当前秒数
-        NSInteger dragedSeconds = floorf(total * slider.value);
-        
-        //转换成CMTime才能给player来控制播放进度
-        
-        CMTime dragedCMTime     = CMTimeMake(dragedSeconds, 1);
-        // 拖拽的时长
-        NSInteger proMin        = (NSInteger)CMTimeGetSeconds(dragedCMTime) / 60;//当前秒
-        NSInteger proSec        = (NSInteger)CMTimeGetSeconds(dragedCMTime) % 60;//当前分钟
-        
-        //duration 总时长
-        NSInteger durMin        = (NSInteger)total / 60;//总秒
-        NSInteger durSec        = (NSInteger)total % 60;//总分钟
-        
-        NSString *currentTime   = [NSString stringWithFormat:@"%02zd:%02zd", proMin, proSec];
-        NSString *totalTime     = [NSString stringWithFormat:@"%02zd:%02zd", durMin, durSec];
-        
-        if (total > 0) { // 当总时长 > 0时候才能拖动slider
-            self.controlView.videoSlider.popUpView.hidden = !self.isFullScreen;
-            self.controlView.currentTimeLabel.text  = currentTime;
-            if (self.isFullScreen) {
-                [self.controlView.videoSlider setText:currentTime];
-                dispatch_queue_t queue = dispatch_queue_create("com.playerPic.queue", DISPATCH_QUEUE_CONCURRENT);
-                dispatch_async(queue, ^{
-                    NSError *error;
-                    CMTime actualTime;
-                    CGImageRef cgImage = [self.imageGenerator copyCGImageAtTime:dragedCMTime actualTime:&actualTime error:&error];
-                    CMTimeShow(actualTime);
-                    UIImage *image = [UIImage imageWithCGImage:cgImage];
-                    CGImageRelease(cgImage);
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        [self.controlView.videoSlider setImage:image ? : ZFPlayerImage(@"ZFPlayer_loading_bgView")];
-                    });
-                });
-                
-            } else {
-                self.controlView.horizontalLabel.hidden = NO;
-                self.controlView.horizontalLabel.text   = [NSString stringWithFormat:@"%@ %@ / %@",style, currentTime, totalTime];
-            }
-        }else {
-            // 此时设置slider值为0
-            slider.value = 0;
-        }
-        
-    }else { // player状态加载失败
-        // 此时设置slider值为0
-        slider.value = 0;
-    }
-}
-
-/**
- *  slider结束滑动事件
- *
- *  @param slider UISlider
- */
-- (void)progressSliderTouchEnded:(ASValueTrackingSlider *)slider
-{
-    if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            self.controlView.horizontalLabel.hidden = YES;
-        });
-        // 结束滑动时候把开始播放按钮改为播放状态
-        self.controlView.startBtn.selected = YES;
-        self.isPauseByUser                 = NO;
-        
-        // 滑动结束延时隐藏controlView
-        [self autoFadeOutControlBar];
-        // 视频总时间长度
-        CGFloat total           = (CGFloat)_playerItem.duration.value / _playerItem.duration.timescale;
-        
-        //计算出拖动的当前秒数
-        NSInteger dragedSeconds = floorf(total * slider.value);
-        
-        [self seekToTime:dragedSeconds completionHandler:nil];
-    }
-}
-
-/**
- *  从xx秒开始播放视频跳转
- *
- *  @param dragedSeconds 视频跳转的秒数
- */
-- (void)seekToTime:(NSInteger)dragedSeconds completionHandler:(void (^)(BOOL finished))completionHandler
-{
-    if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
-        // seekTime:completionHandler:不能精确定位
-        // 如果需要精确定位，可以使用seekToTime:toleranceBefore:toleranceAfter:completionHandler:
-        // 转换成CMTime才能给player来控制播放进度
-        CMTime dragedCMTime = CMTimeMake(dragedSeconds, 1);
-        [self.player seekToTime:dragedCMTime toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
-            // 视频跳转回调
-            if (completionHandler) { completionHandler(finished); }
-            
-            [self play];
-            self.seekTime = 0;
-            if (!self.playerItem.isPlaybackLikelyToKeepUp && !self.isLocalVideo) { self.state = ZFPlayerStateBuffering; }
-            
-        }];
-    }
-}
+///**
+// *  从xx秒开始播放视频跳转
+// *
+// *  @param dragedSeconds 视频跳转的秒数
+// */
+//- (void)seekToTime:(NSInteger)dragedSeconds completionHandler:(void (^)(BOOL finished))completionHandler
+//{
+//    if (self.player.currentItem.status == AVPlayerItemStatusReadyToPlay) {
+//        // seekTime:completionHandler:不能精确定位
+//        // 如果需要精确定位，可以使用seekToTime:toleranceBefore:toleranceAfter:completionHandler:
+//        // 转换成CMTime才能给player来控制播放进度
+//        CMTime dragedCMTime = CMTimeMake(dragedSeconds, 1);
+//        [self.player seekToTime:dragedCMTime toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero completionHandler:^(BOOL finished) {
+//            // 视频跳转回调
+//            if (completionHandler) { completionHandler(finished); }
+//            
+//            [self play];
+//            self.seekTime = 0;
+//            if (!self.playerItem.isPlaybackLikelyToKeepUp && !self.isLocalVideo) { self.state = ZFPlayerStateBuffering; }
+//            
+//        }];
+//    }
+//}
 
 #pragma mark - UIPanGestureRecognizer手势方法
 
@@ -2442,108 +2534,108 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  *
  *  @param pan UIPanGestureRecognizer
  */
-- (void)panDirection:(UIPanGestureRecognizer *)pan
-{
-    //根据在view上Pan的位置，确定是调音量还是亮度
-    CGPoint locationPoint = [pan locationInView:self];
-    
-    // 我们要响应水平移动和垂直移动
-    // 根据上次和本次移动的位置，算出一个速率的point
-    CGPoint veloctyPoint = [pan velocityInView:self];
-    
-    // 判断是垂直移动还是水平移动
-    switch (pan.state) {
-        case UIGestureRecognizerStateBegan:{ // 开始移动
-            // 使用绝对值来判断移动的方向
-            CGFloat x = fabs(veloctyPoint.x);
-            CGFloat y = fabs(veloctyPoint.y);
-            if (x > y) { // 水平移动
-                if (_isPanFastForward) {
-                    // 取消隐藏
-                    self.controlView.horizontalLabel.hidden = NO;
-                    self.panDirection = PanDirectionHorizontalMoved;
-                    // 给sumTime初值
-                    CMTime time       = self.player.currentTime;
-                    self.sumTime      = time.value/time.timescale;
-                    
-                    // 暂停视频播放
-                    [self pause];
-                }
-                
-            }
-            else if (x < y){ // 垂直移动
-                self.panDirection = PanDirectionVerticalMoved;
-                // 开始滑动的时候,状态改为正在控制音量
-                if (locationPoint.x > self.bounds.size.width / 2) {
-                    self.isVolume = YES;
-                }else { // 状态改为显示亮度调节
-                    self.isVolume = NO;
-                }
-            }
-            break;
-        }
-        case UIGestureRecognizerStateChanged:{ // 正在移动
-            switch (self.panDirection) {
-                case PanDirectionHorizontalMoved:{
-                    // 移动中一直显示快进label
-                    if (_isPanFastForward) {
-                        self.controlView.horizontalLabel.hidden = NO;
-                        [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
-                    }
-                    
-                    break;
-                }
-                case PanDirectionVerticalMoved:{
-                    [self verticalMoved:veloctyPoint.y]; // 垂直移动方法只要y方向的值
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
-        case UIGestureRecognizerStateEnded:{ // 移动停止
-            // 移动结束也需要判断垂直或者平移
-            // 比如水平移动结束时，要快进到指定位置，如果这里没有判断，当我们调节音量完之后，会出现屏幕跳动的bug
-            switch (self.panDirection) {
-                case PanDirectionHorizontalMoved:{
-                    // 继续播放
-                    
-                    if (_isPanFastForward) {
-                        [self play];
-                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                            // 隐藏视图
-                            self.controlView.horizontalLabel.hidden = YES;
-                        });
-                        // 快进、快退时候把开始播放按钮改为播放状态
-                        self.controlView.startBtn.selected = YES;
-                        self.isPauseByUser                 = NO;
-                        
-                        [self seekToTime:self.sumTime completionHandler:nil];
-                        // 把sumTime滞空，不然会越加越多
-                        self.sumTime = 0;
-                    }
-                    
-                    
-                    break;
-                }
-                case PanDirectionVerticalMoved:{
-                    // 垂直移动结束后，把状态改为不再控制音量
-                    self.isVolume = NO;
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                        self.controlView.horizontalLabel.hidden = YES;
-                    });
-                    break;
-                }
-                default:
-                    break;
-            }
-            break;
-        }
-        default:
-            break;
-    }
-}
+//- (void)panDirection:(UIPanGestureRecognizer *)pan
+//{
+//    //根据在view上Pan的位置，确定是调音量还是亮度
+//    CGPoint locationPoint = [pan locationInView:self];
+//    
+//    // 我们要响应水平移动和垂直移动
+//    // 根据上次和本次移动的位置，算出一个速率的point
+//    CGPoint veloctyPoint = [pan velocityInView:self];
+//    
+//    // 判断是垂直移动还是水平移动
+//    switch (pan.state) {
+//        case UIGestureRecognizerStateBegan:{ // 开始移动
+//            // 使用绝对值来判断移动的方向
+//            CGFloat x = fabs(veloctyPoint.x);
+//            CGFloat y = fabs(veloctyPoint.y);
+//            if (x > y) { // 水平移动
+//                if (_isPanFastForward) {
+//                    // 取消隐藏
+//                    self.controlView.horizontalLabel.hidden = NO;
+//                    self.panDirection = PanDirectionHorizontalMoved;
+//                    // 给sumTime初值
+//                    CMTime time       = self.player.currentTime;
+//                    self.sumTime      = time.value/time.timescale;
+//                    
+//                    // 暂停视频播放
+//                    [self pause];
+//                }
+//                
+//            }
+//            else if (x < y){ // 垂直移动
+//                self.panDirection = PanDirectionVerticalMoved;
+//                // 开始滑动的时候,状态改为正在控制音量
+//                if (locationPoint.x > self.bounds.size.width / 2) {
+//                    self.isVolume = YES;
+//                }else { // 状态改为显示亮度调节
+//                    self.isVolume = NO;
+//                }
+//            }
+//            break;
+//        }
+//        case UIGestureRecognizerStateChanged:{ // 正在移动
+//            switch (self.panDirection) {
+//                case PanDirectionHorizontalMoved:{
+//                    // 移动中一直显示快进label
+//                    if (_isPanFastForward) {
+//                        self.controlView.horizontalLabel.hidden = NO;
+//                        [self horizontalMoved:veloctyPoint.x]; // 水平移动的方法只要x方向的值
+//                    }
+//                    
+//                    break;
+//                }
+//                case PanDirectionVerticalMoved:{
+//                    [self verticalMoved:veloctyPoint.y]; // 垂直移动方法只要y方向的值
+//                    break;
+//                }
+//                default:
+//                    break;
+//            }
+//            break;
+//        }
+//        case UIGestureRecognizerStateEnded:{ // 移动停止
+//            // 移动结束也需要判断垂直或者平移
+//            // 比如水平移动结束时，要快进到指定位置，如果这里没有判断，当我们调节音量完之后，会出现屏幕跳动的bug
+//            switch (self.panDirection) {
+//                case PanDirectionHorizontalMoved:{
+//                    // 继续播放
+//                    
+//                    if (_isPanFastForward) {
+//                        [self play];
+//                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                            // 隐藏视图
+//                            self.controlView.horizontalLabel.hidden = YES;
+//                        });
+//                        // 快进、快退时候把开始播放按钮改为播放状态
+//                        self.controlView.startBtn.selected = YES;
+//                        self.isPauseByUser                 = NO;
+//                        
+////                        [self seekToTime:self.sumTime completionHandler:nil];
+//                        // 把sumTime滞空，不然会越加越多
+//                        self.sumTime = 0;
+//                    }
+//                    
+//                    
+//                    break;
+//                }
+//                case PanDirectionVerticalMoved:{
+//                    // 垂直移动结束后，把状态改为不再控制音量
+//                    self.isVolume = NO;
+//                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//                        self.controlView.horizontalLabel.hidden = YES;
+//                    });
+//                    break;
+//                }
+//                default:
+//                    break;
+//            }
+//            break;
+//        }
+//        default:
+//            break;
+//    }
+//}
 
 /**
  *  pan垂直移动的方法
@@ -2560,75 +2652,39 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  *
  *  @param value void
  */
-- (void)horizontalMoved:(CGFloat)value
-{
-    // 快进快退的方法
-    NSString *style = @"";
-    if (value < 0) { style = @"<<"; }
-    if (value > 0) { style = @">>"; }
-    if (value == 0) { return; }
-    
-    // 每次滑动需要叠加时间
-    self.sumTime += value / 200;
-    
-    // 需要限定sumTime的范围
-    CMTime totalTime           = self.playerItem.duration;
-    CGFloat totalMovieDuration = (CGFloat)totalTime.value/totalTime.timescale;
-    if (self.sumTime > totalMovieDuration) { self.sumTime = totalMovieDuration;}
-    if (self.sumTime < 0) { self.sumTime = 0; }
-    
-    // 当前快进的时间
-    NSString *nowTime         = [self durationStringWithTime:(int)self.sumTime];
-    // 总时间
-    NSString *durationTime    = [self durationStringWithTime:(int)totalMovieDuration];
-    
-    // 更新快进label的时长
-    self.controlView.horizontalLabel.text  = [NSString stringWithFormat:@"%@ %@ / %@",style, nowTime, durationTime];
-    // 更新slider的进度
-    self.controlView.videoSlider.value     = self.sumTime/totalMovieDuration;
-    // 更新现在播放的时间
-    self.controlView.currentTimeLabel.text = nowTime;
-}
+//- (void)horizontalMoved:(CGFloat)value
+//{
+//    // 快进快退的方法
+//    NSString *style = @"";
+//    if (value < 0) { style = @"<<"; }
+//    if (value > 0) { style = @">>"; }
+//    if (value == 0) { return; }
+//    
+//    // 每次滑动需要叠加时间
+//    self.sumTime += value / 200;
+//    
+//    // 需要限定sumTime的范围
+//    CMTime totalTime           = self.playerItem.duration;
+//    CGFloat totalMovieDuration = (CGFloat)totalTime.value/totalTime.timescale;
+//    if (self.sumTime > totalMovieDuration) { self.sumTime = totalMovieDuration;}
+//    if (self.sumTime < 0) { self.sumTime = 0; }
+//    
+//    // 当前快进的时间
+//    NSString *nowTime         = [self durationStringWithTime:(int)self.sumTime];
+//    // 总时间
+//    NSString *durationTime    = [self durationStringWithTime:(int)totalMovieDuration];
+//    
+//    // 更新快进label的时长
+//    self.controlView.horizontalLabel.text  = [NSString stringWithFormat:@"%@ %@ / %@",style, nowTime, durationTime];
+//    // 更新slider的进度
+//    self.controlView.videoSlider.value     = self.sumTime/totalMovieDuration;
+//    // 更新现在播放的时间
+//    self.controlView.currentTimeLabel.text = nowTime;
+//}
 
-/**
- *  根据时长求出字符串
- *
- *  @param time 时长
- *
- *  @return 时长字符串
- */
-- (NSString *)durationStringWithTime:(int)time
-{
-    // 获取分钟
-    NSString *min = [NSString stringWithFormat:@"%02d",time / 60];
-    // 获取秒数
-    NSString *sec = [NSString stringWithFormat:@"%02d",time % 60];
-    return [NSString stringWithFormat:@"%@:%@", min, sec];
-}
 
-#pragma mark - UIGestureRecognizerDelegate
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
-{
-    if ([gestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-        CGPoint point = [touch locationInView:self.controlView];
-        // （屏幕下方slider区域） || （在cell上播放视频 && 不是全屏状态） || (播放完了) =====>  不响应pan手势
-        if ((point.y > self.bounds.size.height-40) || (self.isCellVideo && !self.isFullScreen) || self.playDidEnd) { return NO; }
-        return YES;
-    }
-    // 在cell上播放视频 && 不是全屏状态 && 点在控制层上
-    if (self.isBottomVideo && !self.isFullScreen && touch.view == self.controlView) {
-        [self fullScreenAction:self.controlView.fullScreenBtn];
-        return NO;
-    }
-    if (self.isBottomVideo && !self.isFullScreen && touch.view == self.controlView.backBtn) {
-        // 关闭player
-        [self resetPlayer];
-        [self removeFromSuperview];
-        return NO;
-    }
-    return YES;
-}
+
 
 #pragma mark - UIAlertViewDelegate
 
@@ -2663,87 +2719,60 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  *
  *  @param state ZFPlayerState
  */
-- (void)setState:(ZFPlayerState)state
-{
-    _state = state;
-    if (state == ZFPlayerStatePlaying) {
-        // 改为黑色的背景，不然站位图会显示
-        UIImage *image = [self buttonImageFromColor:[UIColor blackColor]];
-        self.layer.contents = (id) image.CGImage;
-    } else if (state == ZFPlayerStateFailed) {
-        self.controlView.downLoadBtn.enabled = NO;
-    }
-    // 控制菊花显示、隐藏
-    state == ZFPlayerStateBuffering ? ([self.controlView.activity startAnimating]) : ([self.controlView.activity stopAnimating]);
-}
+//- (void)setState:(ZNKPlayerPlaybackState)state
+//{
+//    _state = state;
+//    if (state == ZNKPlayerStatePlaying) {
+//        // 改为黑色的背景，不然站位图会显示
+//        UIImage *image = [self buttonImageFromColor:[UIColor blackColor]];
+//        self.layer.contents = (id) image.CGImage;
+//    } else if (state == ZFPlayerStateFailed) {
+//        self.controlView.downLoadBtn.enabled = NO;
+//    }
+//    // 控制菊花显示、隐藏
+//    state == ZFPlayerStateBuffering ? ([self.controlView.activity startAnimating]) : ([self.controlView.activity stopAnimating]);
+//}
 
-/**
- *  根据playerItem，来添加移除观察者
- *
- *  @param playerItem playerItem
- */
-- (void)setPlayerItem:(AVPlayerItem *)playerItem
-{
-    if (_playerItem == playerItem) {return;}
-    
-    if (_playerItem) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:_playerItem];
-        [_playerItem removeObserver:self forKeyPath:@"status"];
-        [_playerItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
-        [_playerItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
-        [_playerItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
-    }
-    _playerItem = playerItem;
-    if (playerItem) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayDidEnd:) name:AVPlayerItemDidPlayToEndTimeNotification object:playerItem];
-        [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-        [playerItem addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
-        // 缓冲区空了，需要等待数据
-        [playerItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
-        // 缓冲区有足够数据可以播放了
-        [playerItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
-    }
-}
 
 /**
  *  根据tableview的值来添加、移除观察者
  *
  *  @param tableView tableView
  */
-- (void)setTableView:(UITableView *)tableView
-{
-    if (_tableView == tableView) { return; }
-    
-    if (_tableView) { [_tableView removeObserver:self forKeyPath:kZFPlayerViewContentOffset]; }
-    _tableView = tableView;
-    if (tableView) { [tableView addObserver:self forKeyPath:kZFPlayerViewContentOffset options:NSKeyValueObservingOptionNew context:nil]; }
-}
+//- (void)setTableView:(UITableView *)tableView
+//{
+//    if (_tableView == tableView) { return; }
+//    
+//    if (_tableView) { [_tableView removeObserver:self forKeyPath:kZNKPlayerViewContentOffset]; }
+//    _tableView = tableView;
+//    if (tableView) { [tableView addObserver:self forKeyPath:kZNKPlayerViewContentOffset options:NSKeyValueObservingOptionNew context:nil]; }
+//}
 
 /**
  *  设置playerLayer的填充模式
  *
  *  @param playerLayerGravity playerLayerGravity
  */
-- (void)setPlayerLayerGravity:(ZFPlayerLayerGravity)playerLayerGravity
-{
-    _playerLayerGravity = playerLayerGravity;
-    // AVLayerVideoGravityResize,           // 非均匀模式。两个维度完全填充至整个视图区域
-    // AVLayerVideoGravityResizeAspect,     // 等比例填充，直到一个维度到达区域边界
-    // AVLayerVideoGravityResizeAspectFill  // 等比例填充，直到填充满整个视图区域，其中一个维度的部分区域会被裁剪
-    switch (playerLayerGravity) {
-        case ZFPlayerLayerGravityResize:
-            self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-            break;
-        case ZFPlayerLayerGravityResizeAspect:
-            self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
-            break;
-        case ZFPlayerLayerGravityResizeAspectFill:
-            self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-            break;
-        default:
-            break;
-    }
-}
+//- (void)setPlayerLayerGravity:(ZFPlayerLayerGravity)playerLayerGravity
+//{
+//    _playerLayerGravity = playerLayerGravity;
+//    // AVLayerVideoGravityResize,           // 非均匀模式。两个维度完全填充至整个视图区域
+//    // AVLayerVideoGravityResizeAspect,     // 等比例填充，直到一个维度到达区域边界
+//    // AVLayerVideoGravityResizeAspectFill  // 等比例填充，直到填充满整个视图区域，其中一个维度的部分区域会被裁剪
+//    switch (playerLayerGravity) {
+//        case ZFPlayerLayerGravityResize:
+//            self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+//            break;
+//        case ZFPlayerLayerGravityResizeAspect:
+//            self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+//            break;
+//        case ZFPlayerLayerGravityResizeAspectFill:
+//            self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+//            break;
+//        default:
+//            break;
+//    }
+//}
 
 /**
  *  是否有下载功能
@@ -2774,7 +2803,7 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
         UIImage *image = [UIImage imageNamed:self.placeholderImageName];
         self.layer.contents = (id) image.CGImage;
     }else {
-        UIImage *image = ZFPlayerImage(@"ZFPlayer_loading_bgView");
+        UIImage *image = ZNKPlayerImage(@"ZFPlayer_loading_bgView");
         self.layer.contents = (id) image.CGImage;
     }
 }
@@ -2792,26 +2821,26 @@ static const CGFloat ZNKPlayerControlBarAutoFadeOutTimeInterval = 0.35f;
  *
  *  @return ZFPlayerControlView
  */
-- (ZFPlayerControlView *)controlView
-{
-    if (!_controlView) {
-        _controlView = [[ZFPlayerControlView alloc] init];
-        [self addSubview:_controlView];
-        SKWeakSelf(self);
-        [_controlView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.leading.trailing.bottom.equalTo(weakself);
-        }];
-    }
-    return _controlView;
-}
+//- (ZNKPlayerControlView *)controlView
+//{
+//    if (!_controlView) {
+//        _controlView = [[ZFPlayerControlView alloc] init];
+//        [self addSubview:_controlView];
+//        SKWeakSelf(self);
+//        [_controlView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.top.leading.trailing.bottom.equalTo(weakself);
+//        }];
+//    }
+//    return _controlView;
+//}
 
-- (AVAssetImageGenerator *)imageGenerator
-{
-    if (!_imageGenerator) {
-        _imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self.urlAsset];
-    }
-    return _imageGenerator;
-}
+//- (AVAssetImageGenerator *)imageGenerator
+//{
+//    if (!_imageGenerator) {
+//        _imageGenerator = [AVAssetImageGenerator assetImageGeneratorWithAsset:self.urlAsset];
+//    }
+//    return _imageGenerator;
+//}
 
 @end
 

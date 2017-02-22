@@ -11,14 +11,14 @@
 
 @implementation ZNKMAS_VIEW (ZNKMASAdditions)
 
-- (NSArray *)mas_makeConstraints:(void(^)(ZNKMASConstraintMaker *))block {
+- (NSArray *)ZNKMAs_makeConstraints:(void(^)(ZNKMASConstraintMaker *))block {
     self.translatesAutoresizingMaskIntoConstraints = NO;
     ZNKMASConstraintMaker *constraintZNKMAker = [[ZNKMASConstraintMaker alloc] initWithView:self];
     block(constraintZNKMAker);
     return [constraintZNKMAker install];
 }
 
-- (NSArray *)mas_updateConstraints:(void(^)(ZNKMASConstraintMaker *))block {
+- (NSArray *)ZNKMAs_updateConstraints:(void(^)(ZNKMASConstraintMaker *))block {
     self.translatesAutoresizingMaskIntoConstraints = NO;
     ZNKMASConstraintMaker *constraintZNKMAker = [[ZNKMASConstraintMaker alloc] initWithView:self];
     constraintZNKMAker.updateExisting = YES;
@@ -26,7 +26,7 @@
     return [constraintZNKMAker install];
 }
 
-- (NSArray *)mas_remakeConstraints:(void(^)(ZNKMASConstraintMaker *make))block {
+- (NSArray *)ZNKMAs_remakeConstraints:(void(^)(ZNKMASConstraintMaker *make))block {
     self.translatesAutoresizingMaskIntoConstraints = NO;
     ZNKMASConstraintMaker *constraintZNKMAker = [[ZNKMASConstraintMaker alloc] initWithView:self];
     constraintZNKMAker.removeExisting = YES;

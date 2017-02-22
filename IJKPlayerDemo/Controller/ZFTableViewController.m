@@ -27,11 +27,12 @@
 #import "ZFPlyerResolution.h"
 //#import <Masonry/Masonry.h>
 //#import <ZFDownload/ZFDownloadManager.h>
+#import "ZNKPlayer.h"
 
 @interface ZFTableViewController ()
 
 @property (nonatomic, strong) NSMutableArray *dataSource;
-@property (nonatomic, strong) AYPlayer   *playerView;
+@property (nonatomic, strong) ZNKPlayer   *playerView;
 
 @end
 
@@ -145,7 +146,7 @@
     __weak typeof(self) weakSelf       = self;
     // 点击播放的回调
     cell.playBlock = ^(UIButton *btn){
-        weakSelf.playerView = [AYPlayer sharedPlayerView];
+        weakSelf.playerView = [ZNKPlayer sharedPlayerView];
         // 设置播放前的站位图（需要在设置视频URL之前设置）
         weakSelf.playerView.placeholderImageName = @"loading_bgView1";
         

@@ -33,7 +33,7 @@
     NSMutableArray *constraints = [NSMutableArray array];
     for (ZNKMAS_VIEW *view in self) {
         NSAssert([view isKindOfClass:[ZNKMAS_VIEW class]], @"All objects in the array must be views");
-        [constraints addObjectsFromArray:[view ZNKMAs_reZNKMAkeConstraints:block]];
+        [constraints addObjectsFromArray:[view ZNKMAs_remakeConstraints:block]];
     }
     return constraints;
 }
